@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora Moderna</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      width: 320px;
+    }
+
+    .display {
+      background-color: #1f2937;
+      color: white;
+      text-align: right;
+      padding: 20px;
+      font-size: 36px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 20px;
+      background-color: #e5e7eb;
+    }
+
+    .btn {
+      padding: 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn.number {
+      background-color: white;
+      color: #1f2937;
+    }
+
+    .btn.number:hover {
+      background-color: #d1d5db;
+    }
+
+    .btn.function {
+      background-color: #9ca3af;
+      color: white;
+    }
+
+    .btn.function:hover {
+      background-color: #6b7280;
+    }
+
+    .btn.operator {
+      background-color: #f59e0b;
+      color: white;
+    }
+
+    .btn.operator:hover {
+      background-color: #d97706;
+    }
+
+    .btn.zero {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <div id="display" class="display">0</div>
+  
+  <div class="buttons">
+    <button class="btn function" onclick="clearAll()">AC</button>
+    <button class="btn function" onclick="changeSign()">+/-</button>
+    <button class="btn function" onclick="percentage()">%</button>
+    <button class="btn operator" onclick="setOperation('/')">/</button>
+
+    <button class="btn number" onclick="appendNumber('7')">7</button>
+    <button class="btn number" onclick="appendNumber('8')">8</button>
+    <button class="btn number" onclick="appendNumber('9')">9</button>
+    <button class="btn operator" onclick="setOperation('*')">×</button>
+
+    <button class="btn number" onclick="appendNumber('4')">4</button>
+    <button class="btn number" onclick="appendNumber('5')">5</button>
+    <button class="btn number" onclick="appendNumber('6')">6</button>
+    <button class="btn operator" onclick="setOperation('-')">−</button>
+
+    <button class="btn number" onclick="appendNumber('1')">1</button>
+    <button class="btn number" onclick="appendNumber('2')">2</button>
+    <button class="btn number" onclick="appendNumber('3')">3</button>
+    <button class="btn operator" onclick="setOperation('+')">+</button>
+
+    <button class="btn number zero" onclick="appendNumber('0')">0</button>
+    <button class="btn number" onclick="appendDecimal()">.</button>
+    <button class="btn operator" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+  let currentInput = '0';
+  let previousInput = '';
+  let operation = null;
+  let resetInput = false;
+
+  const display = document.getElementById('display');
+
+  function updateDisplay() {
+    display.textContent = currentInput;
+  }
+
+  function appendNumber(number) {
+    if (currentInput === '0' || resetInput) {
+      currentInput = number;
+      resetInput = false;
+    } else {
+      currentInput += number;
+    }
+    updateDisplay();
+  }
+
+  function appendDecimal() {
+    if (resetInput) {
+      currentInput = '0.';
+      resetInput = false;
+    } else if (!currentInput.includes('.')) {
+      currentInput += '.';
+    }
+    updateDisplay();
+  }
+
+  function setOperation(op) {
+    if (operation !== null && !resetInput) {
+      calculate();
+    }
+    previousInput = currentInput;
+    operation = op;
+    resetInput = true;
+  }
+
+  function calculate() {
+    if (operation === null || resetInput) return;
+
+    let result;
+    const prev = parseFloat(previousInput);
+    const current = parseFloat(currentInput);
+
+    switch (operation) {
+      case '+': result = prev + current; break;
+      case '-': result = prev - current; break;
+      case '*': result = prev * current; break;
+      case '/': result = prev / current; break;
+      default: return;
+    }
+
+    result = parseFloat(result.toFixed(8)).toString();
+    currentInput = result;
+    operation = null;
+    resetInput = true;
+
+    updateDisplay();
+  }
+
+  function clearAll() {
+    currentInput = '0';
+    previousInput = '';
+    operation = null;
+    resetInput = false;
+    updateDisplay();
+  }
+
+  function changeSign() {
+    currentInput = (parseFloat(currentInput) * -1).toString();
+    updateDisplay();
+  }
+
+  function percentage() {
+    currentInput = (parseFloat(currentInput) / 100).toString();
+    updateDisplay();
+  }
+
+  updateDisplay();
+</script>
+
+</body>
+</html>
